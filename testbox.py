@@ -48,30 +48,55 @@ with open (datakilde, encoding = "utf-8") as rf:
 
 # Treningsdata
 train_data, train_labels = prepare_data(norecdata, "train")
+print(train_data[:1])
+print(train_labels[:1])
 
 # Valideringsdata
-# dev_data, dev_labels = prepare_data(norecdata, "dev")
+dev_data, dev_labels = prepare_data(norecdata, "dev")
 
 # Testdata
-# test_data, test_labels = prepare_data(norecdata, "test")
+test_data, test_labels = prepare_data(norecdata, "test")
 
-def tokenize(text): #Oppgave 1 b
+def tokenize(text: str):
     """Tar inn en streng med tekst og returnerer en liste med tokens."""
     # Å splitte på mellomrom er fattigmanns tokenisering. Endre til noe bedre!
-    tokenized = word_tokenize(text)
-
+    tokenized = text.split()
+    
     return tokenized
 
-all_tokens = []
-for text in train_data:
-    tokenized = tokenize(text)
-    for token in tokenized:
-        all_tokens.append(token)
+def nltk_tokenize(text: str): #Oppgave 1 b
+    """Tar inn en streng med tekst og returnerer en liste med tokens."""
+    text = text.lower()
+    tokenized = word_tokenize(text)
+    return tokenized
 
-amount_of_tokens = len(all_tokens)
-unique_tokens = set(all_tokens)
-amount_of_unique_tokens = len(unique_tokens)
+# vanlig .split() tokenizer - 0.3 sec
+# all_tokens = [t for text in train_data for t in tokenize(text)]
+# amount_of_tokens = len(all_tokens)
 
-print(all_tokens[:3])
-print(amount_of_tokens)
-print(amount_of_unique_tokens)
+# unique_tokens = set(all_tokens)
+# amount_of_unique_tokens = len(unique_tokens)
+
+# print(f"split-tokenizer: {amount_of_tokens} | {amount_of_unique_tokens}")
+
+# # nltk tokenizer - 8.7 sec
+# all_tokens = [t for text in train_data for t in nltk_tokenize(text)]
+# amount_of_tokens = len(all_tokens)
+
+# unique_tokens = set(all_tokens)
+# amount_of_unique_tokens = len(unique_tokens)
+
+# print(f"nltk-tokenizer:  {amount_of_tokens} | {amount_of_unique_tokens}")
+
+
+def documents_per_category(labels, category):
+    return len([x for x in labels if x == category])
+
+amount_of_games_documents = documents_per_category(train_labels, "games")
+amount_of_restaurants_documents = documents_per_category(train_labels, "restaurants")
+amount_of_literature_documents = documents_per_category(train_labels, "literature")
+
+print()
+print(amount_of_games_documents)
+print(amount_of_restaurants_documents)
+print(amount_of_literature_documents)
